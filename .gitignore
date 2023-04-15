@@ -4,6 +4,8 @@ terraform/.terraform.lock.hcl
 terraform/terraform.tfstate.backup
 terraform/terraform.tfstate
 terraform/dw-key.pub
+terraform/jjj.pem
+.DS_Store
 
 # Django #
 *.log
