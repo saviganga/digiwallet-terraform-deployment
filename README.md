@@ -17,3 +17,7 @@
 
 4. create key pair (locally or directly on AWS) - used to access EC2 instance created
 
+5. create security group with access ingress and egress rules for the ec2 instance
+
+6. create the ec2 instance
+
