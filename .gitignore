@@ -6,6 +6,8 @@ terraform/terraform.tfstate
 terraform/dw-key.pub
 terraform/jjj.pem
 .DS_Store
+dww-key
+dww-key.pub
 
 # Django #
 *.log

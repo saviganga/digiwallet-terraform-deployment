@@ -21,3 +21,5 @@
 
 6. create the ec2 instance
 
+7. install dependencies for application (docker, ansible, kubectl) - using terraform provisioning
+
