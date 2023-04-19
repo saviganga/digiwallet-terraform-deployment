@@ -8,6 +8,12 @@ terraform/jjj.pem
 .DS_Store
 dww-key
 dww-key.pub
+copy-k8s-config.yml
+install-minikube.sh
+inventory
+install-ansible.sh
+install-docker-ubuntu.sh
+ec2_hosts.txt
 
 # Django #
 *.log
