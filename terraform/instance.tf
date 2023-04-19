@@ -40,7 +40,6 @@ resource "aws_instance" "dw-instance" {
   key_name        = aws_key_pair.dw-key.key_name
   security_groups = [aws_security_group.allow_ssh.name]
 
-  # create a connection to the ec2 instance to run provisioner commands
   connection {
     type        = "ssh"
     user        = "ubuntu"
@@ -48,41 +47,46 @@ resource "aws_instance" "dw-instance" {
     private_key = file(var.PRIVATE_KEY)
   }
 
-  ## provisioner to install ansible on the ec2 instance :
-  provisioner "file" {
-    source      = var.INSTALL_ANSIBLE_UBUNTU
-    destination = "/tmp/install-ansible.sh"
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "sudo chmod u+x /tmp/install-ansible.sh",
-      "/tmp/install-ansible.sh",
-    ]
-  }
-
-  ## provisioner to install docker on the ec2 instance :
-  provisioner "file" {
-    source      = var.INSTALL_DOCKER_UBUNTU
-    destination = "/tmp/install-docker-ubuntu.sh"
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "sudo chmod u+x /tmp/install-docker-ubuntu.sh",
-      "/tmp/install-docker-ubuntu.sh",
-    ]
-  }
-
   ## provisioner to install k8s on the ec2 instance :
   provisioner "file" {
     source      = var.INSTALL_K8S_UBUNTU
-    destination = "/tmp/install-k8s-ubuntu.sh"
+    destination = "/tmp/install-kubectl-ubuntu.sh"
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod u+x /tmp/install-k8s-ubuntu.sh",
-      "/tmp/install-k8s-ubuntu.sh",
+      "sudo chmod u+x /tmp/install-kubectl-ubuntu.sh",
+      "/tmp/install-kubectl-ubuntu.sh",
     ]
   }
+  provisioner "remote-exec" {
+    inline = [
+      "echo 'initializing ssh'"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      host        = self.public_ip
+      private_key = file(var.PRIVATE_KEY)
+    }
+  }
+
+  # update apt and install dependencies
+  provisioner "local-exec" {
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu -i ${aws_instance.dw-instance.public_ip}, --private-key ${path.module}/${var.PRIVATE_KEY} ${path.module}./ansible/playbooks/installsyspackages.yml"
+  }
+
+  # install docker
+  provisioner "local-exec" {
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu -i ${aws_instance.dw-instance.public_ip}, --private-key ${path.module}/${var.PRIVATE_KEY} ${path.module}./ansible/playbooks/installdocker.yml"
+  }
+
+  # run k8s app
+  provisioner "local-exec" {
+    command = var.K8S_APP
+  }
+
+
 
   tags = {
     Name = "digiwallet instance"

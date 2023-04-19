@@ -42,5 +42,11 @@ variable "INSTALL_DOCKER_UBUNTU" {
 }
 
 variable "INSTALL_K8S_UBUNTU" {
-  default = "bash_scripts/install-k8s-ubuntu.sh"
+  default = "bash_scripts/install-kubectl-ubuntu.sh"
 }
+
+variable "K8S_APP" {
+  default = "/Users/saviganga/Documents/working-boy/devOps/terraform/dw/start_cluster.sh"
+}
+
+
